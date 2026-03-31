@@ -15,15 +15,15 @@ ai_service/test_data.csv
 ai_service/models/
 
 # qunx_ai (Flutter) Ignores
-qunx_ai/.dart_tool/
-qunx_ai/.flutter-plugins
-qunx_ai/.flutter-plugins-dependencies
-qunx_ai/.metadata
-qunx_ai/.packages
-qunx_ai/build/
-qunx_ai/qunx_ai.iml
-qunx_ai/nuget.exe
-qunx_ai/windows/flutter/ephemeral/
+dis/.dart_tool/
+dis/.flutter-plugins
+dis/.flutter-plugins-dependencies
+dis/.metadata
+dis/.packages
+dis/build/
+dis/qunx_ai.iml
+dis/nuget.exe
+dis/windows/flutter/ephemeral/
 
 # IDE settings
 .idea/

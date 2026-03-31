@@ -51,7 +51,7 @@ flutter run
 ---
 
 ## 📂 Project Structure
-- `qunx_ai/`: Flutter project containing the main UI and monitoring dashboards.
+- `dis/`: Flutter project containing the main UI and monitoring dashboards.
 - `ai_service/`: Python backend handling data ingestion and AI model inference.
 - `models/`: Pre-trained ML models for system risk assessment.
 
