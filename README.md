@@ -61,7 +61,7 @@ flutter run
 
 ## 🛡️ License
 Copyright (c) 2026 **DIS Research Team**.
-This project is licensed under the **MIT License** - see the LICENSE section for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 This system is intended for research and educational purposes focused on AI-driven infrastructure security.
 
 ---
