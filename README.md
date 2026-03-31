@@ -43,7 +43,7 @@ python app.py
 
 ### **2. Frontend Setup (Flutter App)**
 ```bash
-cd qunx_ai
+cd dis
 flutter pub get
 flutter run
 ```
