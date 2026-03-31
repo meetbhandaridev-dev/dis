@@ -1,0 +1,32 @@
+# Project Level Ignores
+.DS_Store
+Thumbs.db
+*.log
+
+# ai_service (Python) Ignores
+ai_service/__pycache__/
+ai_service/.env
+ai_service/startup_log.txt
+ai_service/system_metrics.db
+ai_service/system_metrics.db-shm
+ai_service/system_metrics.db-wal
+ai_service/test_data.csv
+# EXCLUDING LARGE MODELS FOR GITHUB
+ai_service/models/
+
+# qunx_ai (Flutter) Ignores
+qunx_ai/.dart_tool/
+qunx_ai/.flutter-plugins
+qunx_ai/.flutter-plugins-dependencies
+qunx_ai/.metadata
+qunx_ai/.packages
+qunx_ai/build/
+qunx_ai/qunx_ai.iml
+qunx_ai/nuget.exe
+qunx_ai/windows/flutter/ephemeral/
+
+# IDE settings
+.idea/
+.vscode/
+*.swp
+*.swo
