@@ -1,5 +1,6 @@
 # 🛡️ Digital Immunity System (DIS)
 ### **AI-Driven Autonomous Orchestration Layer for Proactive System Resilience**
+**Developed by the DIS Research Team**
 
 ---
 
@@ -56,13 +57,12 @@ flutter run
 
 ---
 
-## 👥 Meet the Team (D.I.S)
-See [DIS_Team_Roles.md](DIS_Team_Roles.md) for detailed responsibilities.
-
 ---
 
 ## 🛡️ License
-This project is for educational and research purposes. All rights reserved.
+Copyright (c) 2026 **DIS Research Team**.
+This project is licensed under the **MIT License** - see the LICENSE section for details.
+This system is intended for research and educational purposes focused on AI-driven infrastructure security.
 
 ---
-*Developed with ❤️ as part of the DIS Research Project.*
+*Developed with 🤖 & ❤️ by the **DIS Research Team**.*
