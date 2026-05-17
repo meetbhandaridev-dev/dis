@@ -66,4 +66,4 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 This system is intended for research and educational purposes focused on AI-driven infrastructure security.
 
 ---
-*Developed with 🤖 & ❤️ by the **DIS Research Team**.*
+*Developed by the **DIS Research Team**.*
