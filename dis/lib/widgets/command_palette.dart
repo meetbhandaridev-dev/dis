@@ -106,7 +106,7 @@ class _CommandPaletteState extends State<CommandPalette> {
                       border: Border.all(color: Colors.white10),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withValues(alpha: 0.5),
                           blurRadius: 20,
                           spreadRadius: 5,
                         ),
@@ -123,7 +123,7 @@ class _CommandPaletteState extends State<CommandPalette> {
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
-                                color: Colors.white.withOpacity(0.05),
+                                color: Colors.white.withValues(alpha: 0.05),
                               ),
                             ),
                           ),
@@ -159,7 +159,7 @@ class _CommandPaletteState extends State<CommandPalette> {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.05),
+                                  color: Colors.white.withValues(alpha: 0.05),
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(color: Colors.white10),
                                 ),
@@ -203,7 +203,7 @@ class _CommandPaletteState extends State<CommandPalette> {
                             color: Colors.black12,
                             border: Border(
                               top: BorderSide(
-                                color: Colors.white.withOpacity(0.05),
+                                color: Colors.white.withValues(alpha: 0.05),
                               ),
                             ),
                           ),
@@ -272,7 +272,7 @@ class _CommandPaletteState extends State<CommandPalette> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
+        color: Colors.white.withValues(alpha: 0.02),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(
@@ -299,7 +299,7 @@ class _CommandPaletteState extends State<CommandPalette> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: riskColor.withOpacity(0.1),
+                        color: riskColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -342,7 +342,7 @@ class _CommandPaletteState extends State<CommandPalette> {
               widget.onClose();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white.withOpacity(0.05),
+              backgroundColor: Colors.white.withValues(alpha: 0.05),
               foregroundColor: Colors.white70,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               minimumSize: const Size(0, 32),

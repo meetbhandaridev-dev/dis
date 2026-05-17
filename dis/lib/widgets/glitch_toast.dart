@@ -48,12 +48,12 @@ class GlitchToast extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFF0A0A0B).withOpacity(0.9),
+              color: const Color(0xFF0A0A0B).withValues(alpha: 0.9),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(color: Colors.redAccent, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.redAccent.withOpacity(0.3),
+                  color: Colors.redAccent.withValues(alpha: 0.3),
                   blurRadius: 15,
                   spreadRadius: 2,
                 ),

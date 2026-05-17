@@ -120,7 +120,7 @@ class _KernelShieldPageState extends State<KernelShieldPage> {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -142,10 +142,12 @@ class _KernelShieldPageState extends State<KernelShieldPage> {
               itemBuilder: (context, index) {
                 // Mock grid coloring
                 Color color = const Color(0xFFF3F4F6);
-                if (index % 7 == 0)
-                  color = const Color(0xFFEF4444).withOpacity(0.6);
-                if (index % 11 == 0)
-                  color = const Color(0xFF4F46E5).withOpacity(0.6);
+                if (index % 7 == 0) {
+                  color = const Color(0xFFEF4444).withValues(alpha: 0.6);
+                }
+                if (index % 11 == 0) {
+                  color = const Color(0xFF4F46E5).withValues(alpha: 0.6);
+                }
 
                 return AnimatedOpacity(
                   opacity: isScanning ? (index % 3 == 0 ? 0.3 : 1.0) : 1.0,
@@ -221,7 +223,7 @@ class _KernelShieldPageState extends State<KernelShieldPage> {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),

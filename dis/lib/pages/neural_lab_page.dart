@@ -120,7 +120,7 @@ class _NeuralLabPageState extends State<NeuralLabPage> {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -131,7 +131,7 @@ class _NeuralLabPageState extends State<NeuralLabPage> {
         children: [
           _cardHeader('Injected DNA Monitor', LucideIcons.microscope),
           const SizedBox(height: 20),
-          ...widget.dnaThreats.map((threat) => _dnaTile(threat)).toList(),
+          ...widget.dnaThreats.map((threat) => _dnaTile(threat)),
           if (widget.dnaThreats.isEmpty)
             const Center(
               child: Padding(
@@ -201,7 +201,7 @@ class _NeuralLabPageState extends State<NeuralLabPage> {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),

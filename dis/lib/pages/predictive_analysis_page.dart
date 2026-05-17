@@ -24,11 +24,18 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
   bool isSimulating = false;
   bool isCompacting = false;
   Map<String, dynamic>? simResults;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _setupListener();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _setupListener() {
@@ -80,93 +87,127 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
               ? 98
               : (predictionStatus == 'warning' ? 75 : 42));
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(30),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _headerSection(),
-          const SizedBox(height: 30),
-          Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool isMobile = constraints.maxWidth < 900;
+        return SingleChildScrollView(
+          controller: _scrollController,
+          padding: const EdgeInsets.all(30),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(flex: 2, child: _projectionChart()),
-              const SizedBox(width: 25),
-              Expanded(
-                flex: 1,
-                child: _sidebarStats(predictionStatus, stabilityScore),
-              ),
+              _headerSection(isMobile),
+              const SizedBox(height: 30),
+              if (isMobile)
+                Column(
+                  children: [
+                    _projectionChart(),
+                    const SizedBox(height: 25),
+                    _sidebarStats(predictionStatus, stabilityScore),
+                  ],
+                )
+              else
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(flex: 2, child: _projectionChart()),
+                    const SizedBox(width: 25),
+                    Expanded(
+                      flex: 1,
+                      child: _sidebarStats(predictionStatus, stabilityScore),
+                    ),
+                  ],
+                ),
+              if (predictionStatus != 'stable' && !isSimulating)
+                _actionRecommendationCard(),
             ],
           ),
-          if (predictionStatus != 'stable' && !isSimulating)
-            _actionRecommendationCard(),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _headerSection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _headerSection(bool isMobile) {
+    return isMobile
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _headerTitle(),
+              const SizedBox(height: 20),
+              _headerButton(),
+            ],
+          )
+        : Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _headerTitle(),
+              _headerButton(),
+            ],
+          );
+  }
+
+  Widget _headerTitle() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
           children: [
-            Row(
-              children: [
-                const Icon(
-                  LucideIcons.timer,
-                  color: Color(0xFF4F46E5),
-                  size: 28,
-                ),
-                const SizedBox(width: 15),
-                Text(
-                  'Stability Time-Machine',
-                  style: GoogleFonts.inter(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF111827),
-                    letterSpacing: -0.5,
-                  ),
-                ),
-              ],
+            const Icon(
+              LucideIcons.timer,
+              color: Color(0xFF4F46E5),
+              size: 28,
             ),
-            const SizedBox(height: 5),
-            const Text(
-              'AI Digital Twin: Projecting system states through simulation.',
-              style: TextStyle(color: Color(0xFF6B7280)),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Text(
+                'Stability Time-Machine',
+                style: GoogleFonts.inter(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF111827),
+                  letterSpacing: -0.5,
+                ),
+              ),
             ),
           ],
         ),
-        ElevatedButton.icon(
-          onPressed: toggleSimulation,
-          icon: Icon(
-            isSimulating ? LucideIcons.stopCircle : LucideIcons.play,
-            size: 18,
-          ),
-          label: Text(
-            isSimulating ? 'Simulation Active' : 'Start Digital Twin',
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: isSimulating
-                ? const Color(0xFF22C55E).withOpacity(0.1)
-                : Colors.white,
-            foregroundColor: isSimulating
-                ? const Color(0xFF059669)
-                : const Color(0xFF4F46E5),
-            elevation: 0,
-            side: BorderSide(
-              color: isSimulating
-                  ? const Color(0xFF22C55E)
-                  : const Color(0xFFE5E7EB),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
+        const SizedBox(height: 5),
+        const Text(
+          'AI Digital Twin: Projecting system states through simulation.',
+          style: TextStyle(color: Color(0xFF6B7280)),
         ),
       ],
+    );
+  }
+
+  Widget _headerButton() {
+    return ElevatedButton.icon(
+      onPressed: toggleSimulation,
+      icon: Icon(
+        isSimulating ? LucideIcons.stopCircle : LucideIcons.play,
+        size: 18,
+      ),
+      label: Text(
+        isSimulating ? 'Simulation Active' : 'Start Digital Twin',
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSimulating
+            ? const Color(0xFF22C55E).withValues(alpha: 0.1)
+            : Colors.white,
+        foregroundColor: isSimulating
+            ? const Color(0xFF059669)
+            : const Color(0xFF4F46E5),
+        elevation: 0,
+        side: BorderSide(
+          color: isSimulating
+              ? const Color(0xFF22C55E)
+              : const Color(0xFFE5E7EB),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
     );
   }
 
@@ -179,12 +220,12 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isSimulating
-              ? const Color(0xFF22C55E).withOpacity(0.3)
+              ? const Color(0xFF22C55E).withValues(alpha: 0.3)
               : const Color(0xFFE5E7EB),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -265,7 +306,9 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
   }
 
   Widget _buildChart() {
-    final List<FlSpot> currentSpots = widget.ramHistory;
+    final List<FlSpot> currentSpots = widget.ramHistory.isEmpty
+        ? [const FlSpot(0, 0)]
+        : widget.ramHistory;
 
     // Create projection spots based on slope or backend prediction
     final prediction = widget.metrics['prediction'];
@@ -295,6 +338,8 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
         borderData: FlBorderData(show: false),
         minY: 0,
         maxY: 100,
+        minX: 0,
+        maxX: 24,
         lineBarsData: [
           LineChartBarData(
             spots: currentSpots,
@@ -309,14 +354,14 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
                   (isSimulating
                           ? const Color(0xFF22C55E)
                           : const Color(0xFF4F46E5))
-                      .withOpacity(0.05),
+                      .withValues(alpha: 0.05),
             ),
           ),
           LineChartBarData(
             spots: projectionSpots,
             isCurved: true,
             color: isSimulating
-                ? const Color(0xFF22C55E).withOpacity(0.5)
+                ? const Color(0xFF22C55E).withValues(alpha: 0.5)
                 : const Color(0xFFEF4444),
             dashArray: [5, 5],
             barWidth: 3,
@@ -355,12 +400,12 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isSafe
-              ? const Color(0xFF22C55E).withOpacity(0.1)
-              : const Color(0xFFEF4444).withOpacity(0.1),
+              ? const Color(0xFF22C55E).withValues(alpha: 0.1)
+              : const Color(0xFFEF4444).withValues(alpha: 0.1),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -368,8 +413,8 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
         gradient: LinearGradient(
           colors: [
             isSafe
-                ? const Color(0xFF22C55E).withOpacity(0.05)
-                : const Color(0xFFEF4444).withOpacity(0.05),
+                ? const Color(0xFF22C55E).withValues(alpha: 0.05)
+                : const Color(0xFFEF4444).withValues(alpha: 0.05),
             Colors.white,
           ],
           begin: Alignment.topLeft,
@@ -423,7 +468,7 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -487,7 +532,7 @@ class _PredictiveAnalysisPageState extends State<PredictiveAnalysisPage> {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Icon(icon, color: color, size: 14),

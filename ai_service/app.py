@@ -478,6 +478,12 @@ def metrics_agent():
                 defence_engine.handle_threat(risk_class, top_hog=top_hog, proc_list=all_processes)
 
             if is_ui_active:
+                try:
+                    disk_info = psutil.disk_usage('/')
+                    disk_free_gb = disk_info.free / (1024**3)
+                except:
+                    disk_free_gb = 0
+                
                 socketio.emit('system_metrics', {
                     'cpu': cpu,
                     'ram': ram,
@@ -486,7 +492,8 @@ def metrics_agent():
                     'temp': temp,
                     'risk_score': risk_class,
                     'top_hog': top_hog,
-                    'timestamp': time.strftime("%H:%M:%S")
+                    'timestamp': time.strftime("%H:%M:%S"),
+                    'disk_free': disk_free_gb
                 })
 
             # Persist Metrics to SQLite

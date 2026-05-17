@@ -135,7 +135,7 @@ class _SystemConfigPageState extends State<SystemConfigPage> {
             Text(
               'Note: Python dependencies will be updated in the background.',
               style: TextStyle(
-                color: const Color(0xFF4F46E5).withOpacity(0.8),
+                color: const Color(0xFF4F46E5).withValues(alpha: 0.8),
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
               ),
@@ -204,7 +204,7 @@ class _SystemConfigPageState extends State<SystemConfigPage> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(icon, color: color, size: 24),
@@ -294,7 +294,7 @@ class _SystemConfigPageState extends State<SystemConfigPage> {
             border: Border.all(color: const Color(0xFFE5E7EB)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 20,
                 offset: const Offset(0, 4),
               ),
@@ -363,8 +363,8 @@ class _SystemConfigPageState extends State<SystemConfigPage> {
               Switch(
                 value: value,
                 onChanged: onChanged,
-                activeTrackColor: activeColor.withOpacity(0.2),
-                activeColor: activeColor,
+                activeTrackColor: activeColor.withValues(alpha: 0.2),
+                activeThumbColor: activeColor,
               ),
             ],
           ),

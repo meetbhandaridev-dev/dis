@@ -217,7 +217,7 @@ class DashboardPage extends StatelessWidget {
                   children: [
                     Icon(
                       LucideIcons.fingerprint,
-                      color: const Color(0xFF6B7280).withOpacity(0.2),
+                      color: const Color(0xFF6B7280).withValues(alpha: 0.2),
                       size: 40,
                     ),
                     const SizedBox(height: 10),
@@ -290,8 +290,7 @@ class DashboardPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                )
-                .toList(),
+                ),
         ],
       ),
     );
@@ -343,7 +342,7 @@ class DashboardPage extends StatelessWidget {
         color: const Color(0xFFF9FAFB),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: active ? color.withOpacity(0.2) : const Color(0xFFE5E7EB),
+          color: active ? color.withValues(alpha: 0.2) : const Color(0xFFE5E7EB),
         ),
       ),
       child: Row(
@@ -351,7 +350,7 @@ class DashboardPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
+              color: color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Icon(icon, color: color, size: 20),
@@ -383,7 +382,7 @@ class DashboardPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.2),
+                color: color.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.check, color: color, size: 10),
@@ -446,14 +445,19 @@ class DashboardPage extends StatelessWidget {
     String statusText = 'SAFE';
     double gaugeValue = 0.85;
 
-    if (riskScore >= 2) {
-      statusColor = const Color(0xFFEF4444);
-      statusText = 'CRITICAL';
-      gaugeValue = 0.3;
-    } else if (riskScore == 1) {
-      statusColor = const Color(0xFFF59E0B);
-      statusText = 'WARNING';
-      gaugeValue = 0.55;
+    bool isGamingMode = advancedMetrics['gaming_mode'] ?? false;
+    double threshold = isGamingMode ? 90.0 : 40.0;
+
+    if (cpu > threshold) {
+      if (riskScore >= 2) {
+        statusColor = const Color(0xFFEF4444);
+        statusText = 'CRITICAL';
+        gaugeValue = 0.3;
+      } else if (riskScore == 1) {
+        statusColor = const Color(0xFFF59E0B);
+        statusText = 'WARNING';
+        gaugeValue = 0.55;
+      }
     }
 
     return _glassPanel(
@@ -488,7 +492,7 @@ class DashboardPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Current Threat Level: ${riskScore == 0
+                    'Current Threat Level: ${(cpu <= threshold || riskScore == 0)
                         ? "Low"
                         : riskScore == 1
                         ? "Medium"
@@ -578,7 +582,7 @@ class DashboardPage extends StatelessWidget {
                 width: itemWidth,
                 child: _miniMetricCard(
                   'DISK SPACE',
-                  '${(disk * 2.5).toStringAsFixed(0)}GB Free',
+                  '${(advancedMetrics['disk_free'] ?? 0.0).toStringAsFixed(1)}GB Free',
                   _circularStorage(disk / 100),
                 ),
               ),
@@ -653,16 +657,6 @@ class DashboardPage extends StatelessWidget {
               const Text(
                 'System Defense Modes',
                 style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              TextButton(
-                onPressed: () => _showAiChatDialog(context),
-                child: const Text(
-                  'OPEN AI CHAT',
-                  style: TextStyle(
-                    color: const Color(0xFF4F46E5),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
               ),
             ],
           ),
@@ -753,7 +747,7 @@ class DashboardPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? color.withOpacity(0.1) : const Color(0xFFF3F4F6),
+          color: isActive ? color.withValues(alpha: 0.1) : const Color(0xFFF3F4F6),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: isActive ? color : const Color(0xFFE5E7EB)),
         ),
@@ -801,9 +795,9 @@ class DashboardPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -813,7 +807,7 @@ class DashboardPage extends StatelessWidget {
             child: Text(
               message,
               style: TextStyle(
-                color: color.withOpacity(0.8),
+                color: color.withValues(alpha: 0.8),
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -860,7 +854,7 @@ class DashboardPage extends StatelessWidget {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF000000).withOpacity(0.03),
+            color: const Color(0xFF000000).withValues(alpha: 0.03),
             blurRadius: 15,
             offset: const Offset(0, 4),
           ),
@@ -909,7 +903,7 @@ class DashboardPage extends StatelessWidget {
           width: 8,
           height: 10 + (index * 4.0) + (ram % 10), // Stable calculation
           decoration: BoxDecoration(
-            color: const Color(0xFF4F46E5).withOpacity(0.8),
+            color: const Color(0xFF4F46E5).withValues(alpha: 0.8),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -953,17 +947,6 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  void _showAiChatDialog(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: 'AI Chat',
-      transitionDuration: const Duration(milliseconds: 300),
-      pageBuilder: (context, anim1, anim2) =>
-          _AiChatDialog(socket: socket, advancedMetrics: advancedMetrics),
-    );
-  }
-
   Widget _buildAiCoPilotAdvisory() {
     String? response = advancedMetrics['last_ai_response'];
 
@@ -1003,376 +986,12 @@ class DashboardPage extends StatelessWidget {
               response ??
                   'Ask a diagnostic question via Control Panel to receive a neural insight about your current system state.',
               style: const TextStyle(
-                color: const Color(0xFF1F2937),
+                color: Color(0xFF1F2937),
                 fontSize: 12,
                 height: 1.5,
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _AiChatDialog extends StatefulWidget {
-  final dynamic socket;
-  final Map<String, dynamic> advancedMetrics;
-
-  const _AiChatDialog({required this.socket, required this.advancedMetrics});
-
-  @override
-  State<_AiChatDialog> createState() => _AiChatDialogState();
-}
-
-class _AiChatDialogState extends State<_AiChatDialog> {
-  final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  final List<Map<String, dynamic>> _messages = [];
-  bool _isWaiting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _messages.add({
-      'role': 'ai',
-      'text':
-          'Hello! I am your NOVA SHIELD AI Co-pilot. How can I help with your system diagnostics today?',
-    });
-
-    if (widget.socket != null) {
-      widget.socket.on('ai_chat_response', (data) {
-        if (mounted) {
-          setState(() {
-            // Remove any active indicators (Deep Scan or Normal)
-            _messages.removeWhere((m) => m['isIndicator'] == true);
-
-            _messages.add({
-              'role': 'ai',
-              'text':
-                  data['response'] ??
-                  'I apologize, but I could not generate a diagnostic at this time.',
-            });
-            _isWaiting = false;
-          });
-          _scrollToBottom();
-        }
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    if (widget.socket != null) {
-      widget.socket.off('ai_chat_response');
-    }
-    _controller.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  void _sendMessage() {
-    if (_isWaiting || _controller.text.trim().isEmpty) return;
-    final text = _controller.text.trim();
-    final queryLower = text.toLowerCase();
-
-    // Keywords to trigger system analysis indicator
-    const sysKeywords = [
-      'slow',
-      'hang',
-      'lag',
-      'performance',
-      'cpu',
-      'ram',
-      'memory',
-      'speed',
-      'heat',
-      'hot',
-      'system',
-      'status',
-      'pc',
-      'computer',
-      'halat',
-      'garam',
-      'load',
-      'kam',
-      'atak',
-      'thik',
-      'fix',
-      'issue',
-      'problem',
-      'analysis',
-      'scan',
-      'risk',
-      'resource',
-      'usage',
-      'health',
-    ];
-
-    bool isSystemQuery = sysKeywords.any((kw) => queryLower.contains(kw));
-
-    setState(() {
-      _messages.add({'role': 'user', 'text': text});
-
-      // Dynamic Indicator based on query type
-      if (isSystemQuery) {
-        _messages.add({
-          'role': 'ai',
-          'text': 'Deep Scanning system telemetry...',
-          'isIndicator': true,
-          'type': 'deep_scan',
-        });
-      } else {
-        _messages.add({
-          'role': 'ai',
-          'text': 'Processing...',
-          'isIndicator': true,
-          'type': 'normal',
-        });
-      }
-
-      _isWaiting = true;
-      _controller.clear();
-    });
-
-    if (widget.socket != null) {
-      widget.socket.emit('ai_chat_query', {'query': text});
-    }
-
-    _scrollToBottom();
-  }
-
-  void _scrollToBottom() {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_scrollController.hasClients) {
-        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 500,
-        height: 600,
-        margin: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 40,
-              spreadRadius: 2,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Material(
-          color: Colors.transparent,
-          child: Column(
-            children: [
-              // Header
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 15,
-                ),
-                color: Colors.blueAccent.withOpacity(0.1),
-                child: Row(
-                  children: [
-                    const Icon(LucideIcons.brain, color: Colors.blueAccent),
-                    const SizedBox(width: 15),
-                    Text(
-                      'AI NEURAL CO-PILOT',
-                      style: GoogleFonts.inter(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.5,
-                        color: const Color(0xFF111827),
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.close,
-                        color: Color(0xFF6B7280),
-                        size: 20,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-              ),
-              // Message List
-              Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.all(20),
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) {
-                    final msg = _messages[index];
-                    final isAi = msg['role'] == 'ai';
-                    final isIndicator = msg['isIndicator'] == true;
-
-                    if (isIndicator) {
-                      bool isDeepScan = msg['type'] == 'deep_scan';
-                      return Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          margin: const EdgeInsets.only(bottom: 15),
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: isDeepScan
-                                ? const Color(0xFFF5F3FF)
-                                : const Color(0xFFEEF2FF),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: isDeepScan
-                                  ? const Color(0xFFDDD6FE)
-                                  : const Color(0xFFC7D2FE),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation(
-                                    isDeepScan
-                                        ? const Color(0xFF8B5CF6)
-                                        : const Color(0xFF4F46E5),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              Text(
-                                msg['text']!,
-                                style: TextStyle(
-                                  color: isDeepScan
-                                      ? const Color(0xFF7E22CE)
-                                      : const Color(0xFF4338CA),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.5,
-                                ),
-                              ),
-                              if (isDeepScan) ...[
-                                const SizedBox(width: 10),
-                                const Icon(
-                                  LucideIcons.search,
-                                  size: 14,
-                                  color: const Color(0xFF8B5CF6),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-
-                    return Align(
-                      alignment: isAi
-                          ? Alignment.centerLeft
-                          : Alignment.centerRight,
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 15),
-                        padding: const EdgeInsets.all(12),
-                        constraints: const BoxConstraints(maxWidth: 350),
-                        decoration: BoxDecoration(
-                          color: isAi
-                              ? const Color(0xFFF3F4F6)
-                              : const Color(0xFF4F46E5),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isAi
-                                ? const Color(0xFFE5E7EB)
-                                : const Color(0xFF4338CA),
-                          ),
-                        ),
-                        child: Text(
-                          msg['text']!,
-                          style: TextStyle(
-                            color: isAi
-                                ? const Color(0xFF1F2937)
-                                : Colors.white,
-                            fontSize: 13,
-                            height: 1.4,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              // Input Area
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.black26,
-                  border: Border(
-                    top: BorderSide(color: Colors.white.withOpacity(0.05)),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _controller,
-                        enabled: !_isWaiting,
-                        style: TextStyle(
-                          color: _isWaiting
-                              ? const Color(0xFF9CA3AF)
-                              : const Color(0xFF111827),
-                          fontSize: 13,
-                        ),
-                        onSubmitted: (_) => _sendMessage(),
-                        decoration: InputDecoration(
-                          hintText: _isWaiting
-                              ? 'AI is thinking...'
-                              : 'Ask your AI co-pilot...',
-                          hintStyle: const TextStyle(color: Color(0xFF9CA3AF)),
-                          filled: true,
-                          fillColor: const Color(0xFFF9FAFB),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 10,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Color(0xFFE5E7EB),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Color(0xFFE5E7EB),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    IconButton(
-                      icon: Icon(
-                        Icons.send,
-                        color: _isWaiting
-                            ? const Color(0xFFD1D5DB)
-                            : const Color(0xFF4F46E5),
-                      ),
-                      onPressed: _isWaiting ? null : _sendMessage,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -1403,7 +1022,7 @@ class CircularGaugePainter extends CustomPainter {
     );
 
     final glowPaint = Paint()
-      ..color = color.withOpacity(0.1)
+      ..color = color.withValues(alpha: 0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 25;
     canvas.drawArc(

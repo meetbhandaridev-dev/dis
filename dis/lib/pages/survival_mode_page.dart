@@ -3,82 +3,124 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
 
-class SurvivalModePage extends StatelessWidget {
+class SurvivalModePage extends StatefulWidget {
   final Map<String, dynamic> metrics;
   final io.Socket? socket;
 
   const SurvivalModePage({super.key, required this.metrics, this.socket});
 
   @override
-  Widget build(BuildContext context) {
-    final bool isActive = metrics['survival_mode'] ?? false;
+  State<SurvivalModePage> createState() => _SurvivalModePageState();
+}
 
-    return AnimatedContainer(
-      duration: const Duration(seconds: 1),
-      curve: Curves.easeInOut,
-      padding: const EdgeInsets.all(40),
-      decoration: BoxDecoration(
-        color: isActive ? const Color(0xFFFEF2F2) : const Color(0xFFF5F7FB),
-      ),
-      child: Center(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 800),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _powerButton(isActive),
-              const SizedBox(height: 40),
-              Text(
-                isActive
-                    ? 'EMERGENCY SURVIVAL ACTIVE'
-                    : 'SURVIVAL PROTOCOL IDLE',
-                style: GoogleFonts.inter(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w900,
-                  color: isActive
-                      ? const Color(0xFFB91C1C)
-                      : const Color(0xFF111827),
-                  letterSpacing: -1,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              Text(
-                'Immediate priority hijacking to prevent imminent kernel panic or hardware failure.',
-                style: TextStyle(
-                  color: isActive
-                      ? const Color(0xFF991B1B)
-                      : const Color(0xFF6B7280),
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 60),
-              Row(
-                children: [
-                  Expanded(
-                    child: _protocolCard(
-                      LucideIcons.zapOff,
-                      'Power-Save Throttling',
-                      isActive,
-                    ),
-                  ),
-                  const SizedBox(width: 25),
-                  Expanded(
-                    child: _protocolCard(
-                      LucideIcons.activity,
-                      'Kernel Scheduler',
-                      isActive,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
-              if (isActive) _emergencyBanner() else _idleStatus(),
-            ],
+class _SurvivalModePageState extends State<SurvivalModePage> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool isActive = widget.metrics['survival_mode'] ?? false;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        bool isMobile = constraints.maxWidth < 900;
+        return AnimatedContainer(
+          duration: const Duration(seconds: 1),
+          curve: Curves.easeInOut,
+          padding: const EdgeInsets.all(40),
+          decoration: BoxDecoration(
+            color: isActive ? const Color(0xFFFEF2F2) : const Color(0xFFF5F7FB),
           ),
-        ),
-      ),
+          child: Center(
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Container(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    _powerButton(isActive),
+                    const SizedBox(height: 40),
+                    Text(
+                      isActive
+                          ? 'EMERGENCY SURVIVAL ACTIVE'
+                          : 'SURVIVAL PROTOCOL IDLE',
+                      style: GoogleFonts.inter(
+                        fontSize: isMobile ? 24 : 32,
+                        fontWeight: FontWeight.w900,
+                        color: isActive
+                            ? const Color(0xFFB91C1C)
+                            : const Color(0xFF111827),
+                        letterSpacing: -1,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'Immediate priority hijacking to prevent imminent kernel panic or hardware failure.',
+                      style: TextStyle(
+                        color: isActive
+                            ? const Color(0xFF991B1B)
+                            : const Color(0xFF6B7280),
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 60),
+                    if (isMobile)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _protocolCard(
+                            LucideIcons.zapOff,
+                            'Power-Save Throttling',
+                            isActive,
+                          ),
+                          const SizedBox(height: 25),
+                          _protocolCard(
+                            LucideIcons.activity,
+                            'Kernel Scheduler',
+                            isActive,
+                          ),
+                        ],
+                      )
+                    else
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: _protocolCard(
+                                LucideIcons.zapOff,
+                                'Power-Save Throttling',
+                                isActive,
+                              ),
+                            ),
+                            const SizedBox(width: 25),
+                            Expanded(
+                              child: _protocolCard(
+                                LucideIcons.activity,
+                                'Kernel Scheduler',
+                                isActive,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 30),
+                    if (isActive) _emergencyBanner(isMobile) else _idleStatus(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -86,7 +128,7 @@ class SurvivalModePage extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => socket?.emit('toggle_survival_mode', {'active': !active}),
+        onTap: () => widget.socket?.emit('toggle_survival_mode', {'active': !active}),
         borderRadius: BorderRadius.circular(60),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 500),
@@ -102,8 +144,8 @@ class SurvivalModePage extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 color: active
-                    ? const Color(0xFFEF4444).withOpacity(0.4)
-                    : Colors.black.withOpacity(0.06),
+                    ? const Color(0xFFEF4444).withValues(alpha: 0.4)
+                    : Colors.black.withValues(alpha: 0.06),
                 blurRadius: 30,
                 spreadRadius: active ? 10 : 0,
                 offset: const Offset(0, 10),
@@ -123,7 +165,6 @@ class SurvivalModePage extends StatelessWidget {
   Widget _protocolCard(IconData icon, String title, bool active) {
     return Container(
       padding: const EdgeInsets.all(30),
-      height: 260,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -132,7 +173,7 @@ class SurvivalModePage extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -224,7 +265,7 @@ class SurvivalModePage extends StatelessWidget {
     );
   }
 
-  Widget _emergencyBanner() {
+  Widget _emergencyBanner(bool isMobile) {
     return Container(
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
@@ -232,37 +273,51 @@ class SurvivalModePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFEF4444), width: 1.5),
       ),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(LucideIcons.shieldAlert, color: Color(0xFFEF4444), size: 28),
-          SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: isMobile
+          ? Column(
               children: [
-                Text(
-                  'MISSION CRITICAL STATE',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    color: Color(0xFFB91C1C),
-                    letterSpacing: 1,
-                  ),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  'Bypassing group policies to maintain OS core stability. Please close all resource-intensive applications immediately.',
-                  style: TextStyle(
-                    color: Color(0xFF991B1B),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                const Icon(LucideIcons.shieldAlert, color: Color(0xFFEF4444), size: 36),
+                const SizedBox(height: 15),
+                _emergencyBannerText(TextAlign.center),
+              ],
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(LucideIcons.shieldAlert, color: Color(0xFFEF4444), size: 28),
+                const SizedBox(width: 20),
+                Expanded(child: _emergencyBannerText(TextAlign.left)),
               ],
             ),
+    );
+  }
+
+  Widget _emergencyBannerText(TextAlign align) {
+    return Column(
+      crossAxisAlignment: align == TextAlign.center
+          ? CrossAxisAlignment.center
+          : CrossAxisAlignment.start,
+      children: [
+        Text(
+          'MISSION CRITICAL STATE',
+          textAlign: align,
+          style: const TextStyle(
+            fontWeight: FontWeight.w900,
+            color: Color(0xFFB91C1C),
+            letterSpacing: 1,
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          'Bypassing group policies to maintain OS core stability. Please close all resource-intensive applications immediately.',
+          textAlign: align,
+          style: const TextStyle(
+            color: Color(0xFF991B1B),
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 

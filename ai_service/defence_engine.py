@@ -91,7 +91,7 @@ class DefenceEngine:
 
         # --- Ultra-Light Local LLM Strategy (Size: ~250MB) ---
         self.llm = None
-        self.model_path = os.path.join(os.path.dirname(__file__), "models", "smollm2-360m-instruct-q4_k_m.gguf")
+        self.model_path = os.path.join(os.path.dirname(__file__), "models", "SmolLM2-360M-Instruct-Q4_K_M.gguf")
         self.is_llm_loading = False
 
         # --- ADVANCED PROTECT LAYER (Phase 1 & 2) ---
@@ -211,7 +211,10 @@ class DefenceEngine:
     def get_ai_diagnostic(self, user_query=None):
         """Task 3.1: Ultra-Light LLM Diagnostics - Improved Accuracy & Hinglish."""
         if not self._init_llm():
-            return "AI DIAGNOSTIC: Offline. (Download smollm2-360m to models/ to enable)"
+            if not os.path.exists(self.model_path):
+                return "AI DIAGNOSTIC: Offline. (Download smollm2-360m to models/ to enable)"
+            else:
+                return "AI DIAGNOSTIC: Offline. (Run 'pip install llama-cpp-python' in ai_service folder)"
             
         # Expanded Keywords for better detection
         perf_keywords = [

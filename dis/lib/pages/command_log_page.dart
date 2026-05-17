@@ -39,23 +39,7 @@ class CommandLogPage extends StatelessWidget {
                   ],
                 ),
               ),
-              ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(LucideIcons.download, size: 16),
-                label: const Text('Export CSV'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4F46E5),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 15,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
+
             ],
           ),
           const SizedBox(height: 30),
@@ -67,7 +51,7 @@ class CommandLogPage extends StatelessWidget {
               border: Border.all(color: const Color(0xFFE5E7EB)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 20,
                   offset: const Offset(0, 4),
                 ),
@@ -235,8 +219,7 @@ class CommandLogPage extends StatelessWidget {
                   ),
                 ],
               ),
-            )
-            .toList(),
+            ),
       ],
     );
   }

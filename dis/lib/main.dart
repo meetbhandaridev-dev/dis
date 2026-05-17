@@ -100,7 +100,7 @@ class _MainLayoutState extends State<MainLayout> {
   Future<void> _startBackend() async {
     try {
       if (kDebugMode) {
-        print("Running in Debug Mode: Manually start your python app.py");
+        debugPrint("Running in Debug Mode: Manually start your python app.py");
         return;
       }
 
@@ -108,7 +108,7 @@ class _MainLayoutState extends State<MainLayout> {
       final String baseDir = File(Platform.resolvedExecutable).parent.path;
       final String exePath = "$baseDir\\backend\\app.exe";
 
-      print("Starting AI Engine at: $exePath");
+      debugPrint("Starting AI Engine at: $exePath");
 
       _backendProcess = await Process.start(
         exePath,
@@ -118,12 +118,12 @@ class _MainLayoutState extends State<MainLayout> {
         workingDirectory: "$baseDir\\backend",
       );
 
-      print("AI Engine Started with PID: ${_backendProcess?.pid}");
+      debugPrint("AI Engine Started with PID: ${_backendProcess?.pid}");
 
       // Auto-kill backend when Flutter is closed
       ProcessSignal.sigterm.watch().listen((_) => _backendProcess?.kill());
     } catch (e) {
-      print("Failed to start AI Engine: $e");
+      debugPrint("Failed to start AI Engine: $e");
     }
   }
 
@@ -165,6 +165,7 @@ class _MainLayoutState extends State<MainLayout> {
         temp = (data['temp'] ?? 0.0).toDouble();
         riskScore = data['risk_score'] ?? 0;
         topHog = data['top_hog'] ?? "System";
+        advancedMetrics['disk_free'] = data['disk_free'] ?? 0.0;
 
         cpuHistory.removeAt(0);
         ramHistory.removeAt(0);
@@ -249,7 +250,10 @@ class _MainLayoutState extends State<MainLayout> {
           children: [
             const Icon(LucideIcons.shieldAlert, color: Colors.redAccent),
             const SizedBox(width: 10),
-            const Text('AI MITIGATION REQUEST'),
+            const Text(
+              'AI MITIGATION REQUEST',
+              style: TextStyle(color: Colors.white),
+            ),
           ],
         ),
         content: Column(
@@ -258,15 +262,15 @@ class _MainLayoutState extends State<MainLayout> {
           children: [
             Text(
               'AI detected risk in ${data['name']} (PID: ${data['pid']}).',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white70),
             ),
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Trust Score:'),
+                const Text('Trust Score:', style: TextStyle(color: Colors.white70)),
                 Text(
-                  '${data['trust'] ?? 50}/100',
+                  '${((data['trust'] as num?) ?? 50).toStringAsFixed(1)}/100',
                   style: TextStyle(
                     color: (data['trust'] ?? 50) > 70
                         ? Colors.greenAccent
@@ -280,7 +284,7 @@ class _MainLayoutState extends State<MainLayout> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Risk Level:'),
+                const Text('Risk Level:', style: TextStyle(color: Colors.white70)),
                 Text(
                   data['risk'] == 2 ? 'CRITICAL' : 'WARNING',
                   style: TextStyle(
@@ -295,6 +299,7 @@ class _MainLayoutState extends State<MainLayout> {
             const SizedBox(height: 15),
             const Text(
               'The process has been throttled or suspended. Terminate permanently?',
+              style: TextStyle(color: Colors.white70),
             ),
           ],
         ),
@@ -309,7 +314,7 @@ class _MainLayoutState extends State<MainLayout> {
             },
             child: const Text(
               'IGNORE & TRUST',
-              style: TextStyle(color: Colors.white54),
+              style: TextStyle(color: Colors.white54, fontWeight: FontWeight.bold),
             ),
           ),
           ElevatedButton(
@@ -320,8 +325,14 @@ class _MainLayoutState extends State<MainLayout> {
               });
               Navigator.pop(context);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-            child: const Text('KILL PROCESS'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text(
+              'KILL PROCESS',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
@@ -335,7 +346,6 @@ class _MainLayoutState extends State<MainLayout> {
         bool isDesktop = constraints.maxWidth >= 1100;
 
         return Scaffold(
-          key: GlobalKey<ScaffoldState>(),
           drawer: isDesktop
               ? null
               : Drawer(
@@ -379,7 +389,7 @@ class _MainLayoutState extends State<MainLayout> {
                                   ),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.04),
+                                      color: Colors.black.withValues(alpha:0.04),
                                       blurRadius: 20,
                                       offset: const Offset(0, 4),
                                     ),
@@ -565,7 +575,6 @@ class _MainLayoutState extends State<MainLayout> {
                     ),
                   ),
                 ),
-                _sidebarItem(3, LucideIcons.timer, 'Stability Time-Machine'),
                 _sidebarItem(4, LucideIcons.hardDrive, 'Kernel Shield'),
                 _sidebarItem(5, LucideIcons.power, 'Survival Mode'),
                 _sidebarItem(6, LucideIcons.settings, 'System Config'),
@@ -607,7 +616,7 @@ class _MainLayoutState extends State<MainLayout> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
-                ? const Color(0xFF4F46E5).withOpacity(0.08)
+                ? const Color(0xFF4F46E5).withValues(alpha:0.08)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
@@ -647,8 +656,8 @@ class _MainLayoutState extends State<MainLayout> {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isConnected
-              ? const Color(0xFF22C55E).withOpacity(0.2)
-              : const Color(0xFFEF4444).withOpacity(0.2),
+              ? const Color(0xFF22C55E).withValues(alpha:0.2)
+              : const Color(0xFFEF4444).withValues(alpha:0.2),
         ),
       ),
       child: Column(
@@ -683,7 +692,7 @@ class _MainLayoutState extends State<MainLayout> {
             fontSize: 10,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.5,
-            color: color.withOpacity(0.8),
+            color: color.withValues(alpha:0.8),
           ),
         ),
       ],
