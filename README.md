@@ -13,7 +13,6 @@ By utilizing advanced **Neural Telemetry Analysis**, DIS continuously monitors h
 
 ## 🔥 Key Features
 - **🧠 Neural Telemetry Layer:** High-frequency data ingestion of system performance indicators.
-- **📊 Predictive Analytics Engine:** Machine learning models that forecast stability trends and detect anomalous resource growth.
 - **🛡️ Autonomous Defence Engine:** A real-time executive layer that triggers "Survival Mode" protocols to stabilize kernel-level metrics before a crash.
 - **🎮 Gaming Mode Intelligence:** Dynamic thresholding (suppresses warnings up to 90% CPU) to prevent false positives during heavy gaming sessions.
 - **💾 Real-Time Storage Tracking:** Accurate OS-level reporting of free disk space.
@@ -25,7 +24,7 @@ By utilizing advanced **Neural Telemetry Analysis**, DIS continuously monitors h
 ### **Frontend (Dashboard)**
 - **Framework:** Flutter (Dart)
 - **UI Architecture:** Glassmorphism & Modern Dashboard Design
-- **Features:** Real-time system monitoring, Risk alerts, Predictive graphs.
+- **Features:** Real-time system monitoring, Risk alerts, Live telemetry.
 
 ### **Backend (AI Service)**
 - **Language:** Python
