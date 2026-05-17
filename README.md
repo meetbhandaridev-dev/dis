@@ -15,6 +15,8 @@ By utilizing advanced **Neural Telemetry Analysis**, DIS continuously monitors h
 - **🧠 Neural Telemetry Layer:** High-frequency data ingestion of system performance indicators.
 - **📊 Predictive Analytics Engine:** Machine learning models that forecast stability trends and detect anomalous resource growth.
 - **🛡️ Autonomous Defence Engine:** A real-time executive layer that triggers "Survival Mode" protocols to stabilize kernel-level metrics before a crash.
+- **🎮 Gaming Mode Intelligence:** Dynamic thresholding (suppresses warnings up to 90% CPU) to prevent false positives during heavy gaming sessions.
+- **💾 Real-Time Storage Tracking:** Accurate OS-level reporting of free disk space.
 - **🔄 Feedback Loop:** Continuous learning from system interventions to refine future mitigation accuracy.
 
 ---
